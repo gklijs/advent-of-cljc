@@ -19,20 +19,21 @@ if [ ! $SKIP_CLJ ]; then
             "$exclude_flag" "$exclude_pattern"
 fi
 
-if [ $? -eq 1 ]; then
+if [ ! $? ]; then
     exit_code=1
 fi
 
 if [ ! $SKIP_CLJS ]; then
     echo -e "\n=== Running cljs tests"
     mkdir -p cljs-test-runner-out/gen
-    clojure -A:test:test-cljs \
-            -d src -r "$regex" \
-            "$exclude_flag" "$exclude_pattern" \
-            -c cljs-opts.edn
+    NODE_OPTIONS=--max_old_space_size=4096 \
+                clojure -A:test:test-cljs \
+                -d src -r "$regex" \
+                "$exclude_flag" "$exclude_pattern" \
+                -c cljs-opts.edn
 fi
 
-if [ $? -eq 1 ]; then
+if [ ! $? ]; then
     exit_code=1
 fi
 
