@@ -5,8 +5,10 @@
             [clojure.test]
             #?(:cljs [goog.string :as gstring])
             #?(:cljs [goog.string.format])
-            [clojure.string :as str])
-  #?(:cljs (:require-macros [aoc.utils :refer [deftest]])))
+            #?(:cljs [goog.object])
+            #?(:cljs [oops.core]))
+  #?(:cljs (:require-macros [aoc.utils :refer [deftest]]
+                            [oops.core :refer [ocall oget]])))
 
 (defmacro deftime
   "Private. deftime macro from https://github.com/cgrand/macrovich"
@@ -65,10 +67,14 @@
              ret# (:ret timed#)
              ms# (:ms timed#)
              ms# (format "%.2f" ms#)]
-         (println '~name "took" ms# "msecs")))))
+         (println '~name "took" ms# "msecs")
+         (? :cljs
+            (let [mem-usage# (oops.core/ocall js/process "memoryUsage")]
+              (println "Heap used"
+                       (int
+                        (/ (oops.core/oget mem-usage# "heapUsed")
+                           (* 1024 1024))))))))))
 
 ;;;; Scratch
 
 (comment)
-
-
